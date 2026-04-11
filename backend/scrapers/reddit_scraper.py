@@ -1,29 +1,24 @@
 # backend/scrapers/reddit_scraper.py
-import requests
+import praw, os
 from datetime import datetime
 
-HEADERS = {'User-Agent': 'Mozilla/5.0 (compatible; Refract/1.0)'}
+reddit = praw.Reddit(
+    client_id=os.getenv('REDDIT_CLIENT_ID'),
+    client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
+    user_agent=os.getenv('REDDIT_USER_AGENT')
+)
 
 def scrape_reddit(topic: str, subreddits: list[str], limit: int = 20) -> list[dict]:
     articles = []
     for sub in subreddits:
-        url = f"https://www.reddit.com/r/{sub}/search.json?q={topic}&sort=hot&limit={limit}"
-        try:
-            resp = requests.get(url, headers=HEADERS, timeout=10)
-            data = resp.json()
-            posts = data.get('data', {}).get('children', [])
-            for post in posts:
-                p = post['data']
-                articles.append({
-                    'source_type': 'reddit',
-                    'source_name': f"r/{sub}",
-                    'topic': topic,
-                    'title': p.get('title', ''),
-                    'body': p.get('selftext', '') or p.get('title', ''),
-                    'url': f"https://reddit.com{p.get('permalink', '')}",
-                    'published_at': datetime.utcfromtimestamp(p.get('created_utc', 0))
-                })
-        except Exception as e:
-            print(f"Reddit scrape failed for r/{sub}: {e}")
-            continue
+        for post in reddit.subreddit(sub).search(topic, limit=limit, sort='hot'):
+            articles.append({
+                'source_type': 'reddit',
+                'source_name': f'r/{sub}',
+                'topic': topic,
+                'title': post.title,
+                'body': post.selftext[:2000] or post.title,
+                'url': f'https://reddit.com{post.permalink}',
+                'published_at': datetime.utcfromtimestamp(post.created_utc)
+            })
     return articles
