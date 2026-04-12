@@ -5,7 +5,7 @@ from datetime import datetime
 reddit = praw.Reddit(
     client_id=os.getenv('REDDIT_CLIENT_ID'),
     client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
-    user_agent=os.getenv('REDDIT_USER_AGENT')
+    user_agent=os.getenv('REDDIT_USER_AGENT', 'BiasBreach/1.0 (Media Bias Analysis Agent)')
 )
 
 def scrape_reddit(topic: str, subreddits: list[str], limit: int = 20) -> list[dict]:
