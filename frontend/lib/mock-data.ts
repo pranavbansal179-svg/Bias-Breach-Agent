@@ -8,7 +8,7 @@ export const MOCK_ARTICLES: Article[] = [
     topic: 'Artificial Intelligence',
     title: 'AI Regulation: Global Leaders Meet to Discuss Framework',
     body: 'World leaders convened today to establish guidelines for artificial intelligence development, emphasizing the need for balanced oversight that promotes innovation while protecting citizens.',
-    url: 'https://example.com/bbc-ai',
+    url: 'https://www.bbc.com/news/technology',
     published_at: '2024-03-15T10:30:00Z',
     sentiment_score: 0.3,
     bias_score: -1.5,
@@ -17,7 +17,11 @@ export const MOCK_ARTICLES: Article[] = [
     loaded_words: ['balanced', 'protecting'],
     main_claim: 'International cooperation is essential for AI governance',
     framing: 'opportunity',
-    missing_voices: 'Tech industry representatives from developing nations'
+    missing_voices: 'Tech industry representatives from developing nations',
+    bias_reasoning_brief: 'Center-left (-1.5) due to emphasis on regulatory protection and government oversight language.',
+    bias_reasoning_detailed: 'The article scores center-left (-1.5) based on several linguistic markers: (1) Use of "protecting citizens" frames government intervention positively, a pattern common in progressive policy discourse. (2) Emphasis on "balanced oversight" suggests regulation is necessary and beneficial. (3) The framing of international cooperation as essential aligns with globalist policy preferences typically associated with center-left positions. However, the acknowledgment of innovation needs prevents a stronger left score, showing journalistic balance.',
+    sentiment_reasoning_brief: 'Positive (+0.3) due to optimistic tone about international cooperation and constructive outcomes.',
+    sentiment_reasoning_detailed: 'Sentiment analysis detected a mildly positive tone (+0.3) based on: (1) Constructive framing of the meeting as productive ("convened to establish guidelines"). (2) Use of balanced language suggesting achievable compromise. (3) Forward-looking tone about AI development potential. (4) Absence of alarmist language or negative predictions. The BERT model identified 67% positive-leaning sentences with neutral remainder.'
   },
   {
     id: 2,
@@ -26,7 +30,7 @@ export const MOCK_ARTICLES: Article[] = [
     topic: 'Artificial Intelligence',
     title: 'OpenAI just killed another competitor - this monopoly is getting out of control',
     body: 'Yet another AI startup acquired. The concentration of power in Silicon Valley tech giants threatens innovation and consumer choice. We need antitrust action NOW.',
-    url: 'https://reddit.com/r/technology/example',
+    url: 'https://www.reddit.com/r/technology',
     published_at: '2024-03-15T08:15:00Z',
     sentiment_score: -0.7,
     bias_score: -4.5,
@@ -35,7 +39,11 @@ export const MOCK_ARTICLES: Article[] = [
     loaded_words: ['monopoly', 'killed', 'threatens'],
     main_claim: 'Big Tech consolidation harms the AI ecosystem',
     framing: 'threat',
-    missing_voices: 'Startup founders, acquisition targets'
+    missing_voices: 'Startup founders, acquisition targets',
+    bias_reasoning_brief: 'Left (-4.5) due to anti-corporate rhetoric and calls for government antitrust intervention.',
+    bias_reasoning_detailed: 'The post scores left (-4.5) based on: (1) Strong anti-corporate framing with "monopoly" and "killed" as loaded terms. (2) Explicit call for government intervention ("antitrust action NOW") reflects progressive economic policy preferences. (3) Framing of corporate power as inherently threatening to public good. (4) Populist "us vs them" narrative against tech giants. These patterns align strongly with left-leaning economic criticism while stopping short of far-left anti-capitalist positions.',
+    sentiment_reasoning_brief: 'Negative (-0.7) driven by outrage language: "killed", "out of control", urgent calls for action.',
+    sentiment_reasoning_detailed: 'Strong negative sentiment (-0.7) detected based on: (1) Emotionally charged verb "killed" instead of neutral "acquired". (2) Phrase "out of control" signals alarm and loss of agency. (3) ALL-CAPS "NOW" indicates urgency and frustration. (4) Threat framing throughout ("threatens innovation and consumer choice"). The emotional classification system identified "outrage" as the dominant emotion with 89% confidence.'
   },
   {
     id: 3,
@@ -44,7 +52,7 @@ export const MOCK_ARTICLES: Article[] = [
     topic: 'Artificial Intelligence',
     title: 'Biden Admin AI Rules Could Cripple American Innovation',
     body: 'The proposed AI regulations threaten to hand our technological advantage to China. Business leaders warn of job losses and economic decline if overreaching government controls proceed.',
-    url: 'https://example.com/fox-ai',
+    url: 'https://www.foxnews.com/tech',
     published_at: '2024-03-15T11:00:00Z',
     sentiment_score: -0.5,
     bias_score: 6.5,
@@ -53,7 +61,11 @@ export const MOCK_ARTICLES: Article[] = [
     loaded_words: ['cripple', 'overreaching', 'threaten'],
     main_claim: 'Government regulation will harm US competitiveness',
     framing: 'threat',
-    missing_voices: 'Consumer advocacy groups, AI safety researchers'
+    missing_voices: 'Consumer advocacy groups, AI safety researchers',
+    bias_reasoning_brief: 'Right (+6.5) due to anti-regulation stance, China competition framing, and business-first priorities.',
+    bias_reasoning_detailed: 'The article scores right (+6.5) based on: (1) "Biden Admin" framing attributes policy to political opposition (partisan signaling). (2) China competition narrative is a common conservative foreign policy frame. (3) "Overreaching government controls" reflects anti-regulation ideology. (4) Prioritizing business/economic concerns over safety reflects conservative economic values. (5) "Cripple" is loaded language suggesting extreme government harm. The combination places this firmly in right-leaning territory without reaching far-right extremes.',
+    sentiment_reasoning_brief: 'Negative (-0.5) due to alarmist framing about economic consequences and job losses.',
+    sentiment_reasoning_detailed: 'Negative sentiment (-0.5) identified through: (1) Catastrophizing language ("cripple", "decline"). (2) Threat-based framing ("threaten to hand... to China"). (3) Economic fear appeals ("job losses"). (4) Warning quotes from authority figures. While negative, the professional journalistic structure prevents extreme negativity scores. The model detected 72% negative-coded language with fear as secondary emotion.'
   },
   {
     id: 4,
@@ -71,7 +83,11 @@ export const MOCK_ARTICLES: Article[] = [
     loaded_words: [],
     main_claim: 'AI progress comes with legitimate concerns that need addressing',
     framing: 'neutral',
-    missing_voices: 'End users affected by AI systems'
+    missing_voices: 'End users affected by AI systems',
+    bias_reasoning_brief: 'Center (+0.5) as article presents multiple viewpoints without advocating for partisan positions.',
+    bias_reasoning_detailed: 'The article scores center (+0.5) demonstrating balanced journalism: (1) "Balanced Assessment" in title signals intentional neutrality. (2) Acknowledges both "progress" (positive) and "challenges" (concerns) equally. (3) Validates concerns ("remain valid") without dismissing technology benefits. (4) No loaded language detected - factual descriptors only. (5) No policy advocacy or calls to action. This represents textbook balanced tech journalism with slight optimistic lean (+0.5) due to "advanced significantly" framing.',
+    sentiment_reasoning_brief: 'Slightly positive (+0.2) due to constructive tone acknowledging both progress and valid concerns.',
+    sentiment_reasoning_detailed: 'Mildly positive sentiment (+0.2) based on: (1) "Advanced significantly" indicates progress and achievement. (2) "Valid" concerns framing suggests problems are solvable. (3) Review/assessment framing is inherently neutral-constructive. (4) No alarming or celebratory language. The balanced approach results in near-neutral score with slight positive lean from progress acknowledgment.'
   },
   {
     id: 5,
@@ -80,7 +96,7 @@ export const MOCK_ARTICLES: Article[] = [
     topic: 'Artificial Intelligence',
     title: 'Woke AI Censorship: ChatGPT refuses to write anything conservative',
     body: 'Tried to get ChatGPT to write a conservative viewpoint and it refused. Meanwhile it happily writes liberal talking points. The bias in AI is undeniable and dangerous.',
-    url: 'https://reddit.com/r/conservative/example',
+    url: 'https://www.reddit.com/r/Conservative',
     published_at: '2024-03-15T07:30:00Z',
     sentiment_score: -0.8,
     bias_score: 8.0,
@@ -89,7 +105,11 @@ export const MOCK_ARTICLES: Article[] = [
     loaded_words: ['woke', 'censorship', 'dangerous'],
     main_claim: 'AI systems are politically biased against conservatives',
     framing: 'conflict',
-    missing_voices: 'AI developers, content moderation experts'
+    missing_voices: 'AI developers, content moderation experts',
+    bias_reasoning_brief: 'Far-right (+8.0) due to "woke" terminology, victimization framing, and explicit conservative identity.',
+    bias_reasoning_detailed: 'The post scores far-right (+8.0) based on: (1) "Woke" is a strongly right-coded term used pejoratively. (2) "Censorship" frames content moderation as political persecution. (3) Explicit conservative identity framing ("conservative viewpoint"). (4) Victimization narrative (conservatives as oppressed group). (5) "Dangerous" catastrophizes perceived bias. (6) Binary framing (conservative vs liberal) without nuance. The combination of partisan terminology and grievance framing places this in far-right territory.',
+    sentiment_reasoning_brief: 'Highly negative (-0.8) reflecting frustration, perceived victimization, and alarm language.',
+    sentiment_reasoning_detailed: 'Strong negative sentiment (-0.8) detected: (1) Frustration tone ("refused", "meanwhile") suggests unfair treatment. (2) "Undeniable" indicates certainty and dismissal of counter-arguments. (3) "Dangerous" is high-intensity alarm language. (4) Personal experience framing ("tried to get") adds emotional investment. The outrage classification (94% confidence) indicates strong negative emotional activation typical of grievance-based discourse.'
   },
   {
     id: 6,
@@ -98,7 +118,7 @@ export const MOCK_ARTICLES: Article[] = [
     topic: 'Artificial Intelligence',
     title: 'Tech Companies Report Mixed Q4 Results Amid AI Investment Surge',
     body: 'Major technology firms posted quarterly earnings that reflected substantial AI infrastructure investments. Analysts note varying returns on these expenditures across the sector.',
-    url: 'https://reuters.com/tech-q4',
+    url: 'https://www.reuters.com/technology',
     published_at: '2024-03-15T09:00:00Z',
     sentiment_score: 0.1,
     bias_score: 0.0,
@@ -107,7 +127,11 @@ export const MOCK_ARTICLES: Article[] = [
     loaded_words: [],
     main_claim: 'AI investments are showing mixed financial returns',
     framing: 'neutral',
-    missing_voices: 'Retail investors, pension fund managers'
+    missing_voices: 'Retail investors, pension fund managers',
+    bias_reasoning_brief: 'Center (0.0) - textbook neutral wire-service reporting with no advocacy or loaded language.',
+    bias_reasoning_detailed: 'The article scores perfect center (0.0) as exemplary neutral journalism: (1) Factual headline with no evaluative language. (2) "Mixed" results framing neither celebrates nor criticizes. (3) Attributes analysis to "analysts" rather than editorial position. (4) No policy implications or calls to action. (5) Zero loaded words detected. (6) Financial reporting format inherently neutral. This represents the Reuters standard of objective wire-service journalism.',
+    sentiment_reasoning_brief: 'Neutral (+0.1) reflecting objective financial reporting without emotional framing.',
+    sentiment_reasoning_detailed: 'Near-neutral sentiment (+0.1) demonstrates objective reporting: (1) "Mixed results" is definitionally neutral. (2) "Substantial investments" is factual, not evaluative. (3) "Varying returns" presents data without judgment. (4) No positive or negative predictions. The tiny positive lean comes from "surge" which has mildly positive connotations of growth/activity. Overall, this is textbook neutral financial journalism.'
   },
   {
     id: 7,
@@ -116,7 +140,7 @@ export const MOCK_ARTICLES: Article[] = [
     topic: 'Artificial Intelligence',
     title: 'AI Art Generators Are Getting Scary Good - And Artists Are Furious',
     body: 'The latest generation of AI image tools can replicate any style with disturbing accuracy. Creative professionals face an existential threat as their work is scraped without consent.',
-    url: 'https://theverge.com/ai-art',
+    url: 'https://www.theverge.com/ai',
     published_at: '2024-03-14T14:30:00Z',
     sentiment_score: -0.4,
     bias_score: -2.0,
@@ -125,7 +149,11 @@ export const MOCK_ARTICLES: Article[] = [
     loaded_words: ['scary', 'furious', 'existential threat'],
     main_claim: 'AI image generation threatens human artists livelihoods',
     framing: 'threat',
-    missing_voices: 'AI tool developers, consumers benefiting from AI art'
+    missing_voices: 'AI tool developers, consumers benefiting from AI art',
+    bias_reasoning_brief: 'Center-left (-2.0) due to worker protection focus and consent/rights framing.',
+    bias_reasoning_detailed: 'The article scores center-left (-2.0) based on: (1) Sympathy framing for creative workers ("artists are furious"). (2) "Without consent" emphasizes rights/ethical concerns - progressive value signaling. (3) "Existential threat" to livelihoods reflects labor protection priorities. (4) Critical stance toward corporate technology practices. These patterns align with center-left cultural and economic positions without reaching stronger left-wing anti-corporate stances.',
+    sentiment_reasoning_brief: 'Negative (-0.4) due to threat-focused language: "scary", "furious", "existential threat".',
+    sentiment_reasoning_detailed: 'Moderate negative sentiment (-0.4) detected: (1) "Scary good" - negative framing of capability. (2) "Furious" - strong negative emotion attributed to subjects. (3) "Disturbing accuracy" - negative evaluation of technical achievement. (4) "Existential threat" - catastrophizing language. The article presents legitimate concerns but uses emotionally charged framing that pushes sentiment negative. Fear and anger are co-dominant emotions (67% combined).'
   },
   {
     id: 8,
@@ -134,7 +162,7 @@ export const MOCK_ARTICLES: Article[] = [
     topic: 'Artificial Intelligence',
     title: '[D] New paper shows transformers have fundamental scaling limitations',
     body: 'Interesting research suggesting current architectures may hit walls. Discussion of alternative approaches and what this means for AGI timelines.',
-    url: 'https://reddit.com/r/machinelearning/example',
+    url: 'https://www.reddit.com/r/MachineLearning',
     published_at: '2024-03-15T12:00:00Z',
     sentiment_score: 0.0,
     bias_score: 0.2,
@@ -143,7 +171,11 @@ export const MOCK_ARTICLES: Article[] = [
     loaded_words: [],
     main_claim: 'Current AI scaling approaches have technical limitations',
     framing: 'neutral',
-    missing_voices: 'Industry practitioners implementing these systems'
+    missing_voices: 'Industry practitioners implementing these systems',
+    bias_reasoning_brief: 'Center (+0.2) - technical discussion without political or ideological framing.',
+    bias_reasoning_detailed: 'The post scores center (+0.2) as apolitical technical discourse: (1) Academic framing ([D] for Discussion). (2) Focus on technical/scientific claims, not policy. (3) Neutral speculation ("may hit walls") without advocacy. (4) No loaded language - all technical terminology. (5) Invites discussion rather than asserting conclusions. Technical/scientific discussions typically score near-center as they operate outside political framing.',
+    sentiment_reasoning_brief: 'Neutral (0.0) - academic discussion tone without emotional framing.',
+    sentiment_reasoning_detailed: 'Perfectly neutral sentiment (0.0) reflects academic discourse norms: (1) "Interesting research" is mild positive balanced by "limitations" (mild negative). (2) "May" indicates uncertainty, not alarm. (3) Discussion framing invites analysis, not reaction. (4) No emotional language detected. Technical subreddits typically show neutral sentiment as users prioritize information over expression.'
   },
   {
     id: 9,
@@ -152,7 +184,7 @@ export const MOCK_ARTICLES: Article[] = [
     topic: 'Artificial Intelligence',
     title: 'AI Surveillance: How Corporations Track Your Every Move',
     body: 'Investigation reveals extent of AI-powered surveillance in everyday life. Privacy advocates call for immediate legislative action to protect civil liberties.',
-    url: 'https://msnbc.com/ai-surveillance',
+    url: 'https://www.msnbc.com/tech',
     published_at: '2024-03-14T20:00:00Z',
     sentiment_score: -0.6,
     bias_score: -5.0,
@@ -161,7 +193,11 @@ export const MOCK_ARTICLES: Article[] = [
     loaded_words: ['surveillance', 'track', 'every move'],
     main_claim: 'Corporate AI surveillance threatens privacy rights',
     framing: 'threat',
-    missing_voices: 'Tech companies, security professionals'
+    missing_voices: 'Tech companies, security professionals',
+    bias_reasoning_brief: 'Left (-5.0) due to anti-corporate framing and calls for government intervention to protect citizens.',
+    bias_reasoning_detailed: 'The article scores left (-5.0) based on: (1) Anti-corporate framing ("Corporations Track Your..."). (2) Civil liberties focus - progressive value priority. (3) Call for "legislative action" - government intervention solution. (4) "Privacy advocates" sourcing signals alignment with progressive groups. (5) Investigative/expose format targeting corporate practices. These patterns align strongly with left-leaning positions on corporate accountability and government protection of citizens.',
+    sentiment_reasoning_brief: 'Negative (-0.6) due to alarming investigative tone: "surveillance", "track your every move".',
+    sentiment_reasoning_detailed: 'Clearly negative sentiment (-0.6) from investigative journalism framing: (1) "Surveillance" has inherently negative connotations. (2) "Every move" emphasizes invasiveness and loss of privacy. (3) "Reveals extent" suggests hidden wrongdoing exposed. (4) Call for "immediate action" signals urgency/alarm. The expose format intentionally generates concern to motivate reader response. Fear is the dominant detected emotion (78%).'
   },
   {
     id: 10,
@@ -170,7 +206,7 @@ export const MOCK_ARTICLES: Article[] = [
     topic: 'Artificial Intelligence',
     title: 'Inside the Race to Build Safe Superintelligence',
     body: 'We spent a week with AI safety researchers working to ensure advanced AI systems remain aligned with human values. Their work may determine our future.',
-    url: 'https://wired.com/ai-safety',
+    url: 'https://www.wired.com/ai-safety',
     published_at: '2024-03-15T06:00:00Z',
     sentiment_score: 0.3,
     bias_score: -1.0,
@@ -179,7 +215,11 @@ export const MOCK_ARTICLES: Article[] = [
     loaded_words: ['race', 'determine our future'],
     main_claim: 'AI safety research is critical for humanitys future',
     framing: 'opportunity',
-    missing_voices: 'AI capabilities researchers, deployment teams'
+    missing_voices: 'AI capabilities researchers, deployment teams',
+    bias_reasoning_brief: 'Center-left (-1.0) due to safety/precautionary emphasis and human values alignment focus.',
+    bias_reasoning_detailed: 'The article scores center-left (-1.0) based on: (1) AI safety framing prioritizes caution over acceleration - precautionary principle. (2) "Human values" language aligns with progressive tech ethics discourse. (3) Sympathetic portrayal of safety researchers (progressive-coded in tech). (4) "Aligned" terminology from AI ethics community. However, constructive rather than alarmist tone and acknowledgment of positive potential keeps score moderate rather than strongly left.',
+    sentiment_reasoning_brief: 'Positive (+0.3) due to hopeful framing of researchers working toward beneficial outcomes.',
+    sentiment_reasoning_detailed: 'Mildly positive sentiment (+0.3) from: (1) "Inside" access framing creates intimacy/trust. (2) Researchers portrayed as heroes ("working to ensure"). (3) "Safe" is inherently positive framing. (4) "Determine our future" is weighty but hopeful (they CAN determine it positively). The constructive, solution-oriented framing generates net positive sentiment despite serious subject matter.'
   },
   {
     id: 11,
@@ -188,7 +228,7 @@ export const MOCK_ARTICLES: Article[] = [
     topic: 'Artificial Intelligence',
     title: 'Enterprise AI Adoption Accelerates as ROI Becomes Clear',
     body: 'Fortune 500 companies report significant productivity gains from AI deployment. CFOs increasingly view AI investment as essential for competitive positioning.',
-    url: 'https://wsj.com/enterprise-ai',
+    url: 'https://www.wsj.com/tech/ai',
     published_at: '2024-03-15T05:30:00Z',
     sentiment_score: 0.6,
     bias_score: 3.0,
@@ -197,7 +237,11 @@ export const MOCK_ARTICLES: Article[] = [
     loaded_words: ['accelerates', 'essential'],
     main_claim: 'AI provides clear business value for enterprises',
     framing: 'opportunity',
-    missing_voices: 'Workers displaced by AI, small businesses'
+    missing_voices: 'Workers displaced by AI, small businesses',
+    bias_reasoning_brief: 'Center-right (+3.0) due to business-focused framing and emphasis on ROI and competitive advantage.',
+    bias_reasoning_detailed: 'The article scores center-right (+3.0) based on: (1) Business/corporate perspective dominates (CFOs, Fortune 500). (2) ROI framing prioritizes profit over other considerations. (3) "Competitive positioning" reflects free-market values. (4) No mention of worker impact, regulatory concerns, or ethical considerations. (5) "Essential" creates urgency for business adoption. This reflects typical business publication framing that centers corporate interests - a center-right economic perspective.',
+    sentiment_reasoning_brief: 'Positive (+0.6) due to optimistic business outlook: "accelerates", "gains", "essential".',
+    sentiment_reasoning_detailed: 'Clearly positive sentiment (+0.6) from business success framing: (1) "Accelerates" implies momentum and progress. (2) "Significant gains" is explicitly positive outcome language. (3) "Clear" ROI suggests certainty and validation. (4) "Essential" positions AI as valuable/necessary. Business success story format inherently generates positive sentiment. The article reads as good news for the business community.'
   },
   {
     id: 12,
@@ -206,7 +250,7 @@ export const MOCK_ARTICLES: Article[] = [
     topic: 'Artificial Intelligence',
     title: 'EU passes landmark AI Act - strictest regulations in the world',
     body: 'The European Union has finalized comprehensive AI legislation. Critics argue it goes too far, supporters say it sets important precedents for protecting citizens.',
-    url: 'https://reddit.com/r/worldnews/ai-act',
+    url: 'https://www.reddit.com/r/worldnews',
     published_at: '2024-03-15T13:00:00Z',
     sentiment_score: 0.2,
     bias_score: -0.5,
@@ -215,7 +259,11 @@ export const MOCK_ARTICLES: Article[] = [
     loaded_words: ['landmark', 'strictest'],
     main_claim: 'EU leads global AI regulation efforts',
     framing: 'neutral',
-    missing_voices: 'EU tech startups affected by compliance costs'
+    missing_voices: 'EU tech startups affected by compliance costs',
+    bias_reasoning_brief: 'Center (-0.5) - presents both critic and supporter viewpoints with slight pro-regulation lean.',
+    bias_reasoning_detailed: 'The post scores near-center (-0.5) with slight left lean: (1) "Landmark" is mildly positive framing of regulation. (2) Includes both "critics" and "supporters" - balanced sourcing. (3) "Protecting citizens" frames regulation positively (progressive lean). (4) "Goes too far" criticism included but not emphasized. (5) "Strictest" could be positive or negative depending on reader values. The slight left lean comes from framing regulation as "landmark" achievement rather than neutral policy change.',
+    sentiment_reasoning_brief: 'Slightly positive (+0.2) due to "landmark" framing suggesting historic significance.',
+    sentiment_reasoning_detailed: 'Mildly positive sentiment (+0.2) from balanced but achievement-focused framing: (1) "Landmark" suggests important accomplishment. (2) "Comprehensive" implies thorough/well-considered. (3) Including criticism ("goes too far") moderates positivity. (4) "Protecting citizens" is positive outcome framing. Overall neutral reporting with slight positive lean from achievement framing of legislative passage.'
   }
 ];
 

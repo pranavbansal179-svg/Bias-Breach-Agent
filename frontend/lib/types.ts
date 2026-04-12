@@ -15,6 +15,10 @@ export interface Article {
   main_claim: string;
   framing: string;
   missing_voices: string;
+  bias_reasoning_brief: string;
+  bias_reasoning_detailed: string;
+  sentiment_reasoning_brief: string;
+  sentiment_reasoning_detailed: string;
 }
 
 export interface AnalysisResult {

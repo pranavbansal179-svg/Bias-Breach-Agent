@@ -1,6 +1,7 @@
 'use client';
+import { useState } from 'react';
 import { Article } from '@/lib/types';
-import { ExternalLink, X, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { X, TrendingUp, TrendingDown, Minus, Brain, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ArticleDetailProps {
   article: Article;
@@ -34,6 +35,9 @@ function getSentimentDisplay(score: number) {
 }
 
 export default function ArticleDetail({ article, onClose }: ArticleDetailProps) {
+  const [showDetailedBias, setShowDetailedBias] = useState(false);
+  const [showDetailedSentiment, setShowDetailedSentiment] = useState(false);
+  
   const biasInfo = getBiasInfo(article.bias_label);
   const sentimentInfo = getSentimentDisplay(article.sentiment_score);
   const sourceColor = SOURCE_COLORS[article.source_type] || '#71717a';
@@ -122,6 +126,114 @@ export default function ArticleDetail({ article, onClose }: ArticleDetailProps) 
         </div>
       </div>
 
+      {/* AI Analysis Reasoning Section */}
+      <div className="mb-6 border border-accent/30 rounded-lg overflow-hidden">
+        <div className="bg-accent/10 px-4 py-3 border-b border-accent/30">
+          <div className="flex items-center gap-2">
+            <Brain className="w-4 h-4 text-accent" />
+            <h4 className="text-sm font-medium text-foreground">AI Agent Analysis Reasoning</h4>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Transparent explanation of how our unbiased AI agents scored this article
+          </p>
+        </div>
+        
+        {/* Bias Reasoning */}
+        {article.bias_reasoning_brief && (
+          <div className="p-4 border-b border-accent/20">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 via-zinc-500 to-red-500 flex items-center justify-center flex-shrink-0">
+                <span className="text-xs font-bold text-white">B</span>
+              </div>
+              <div className="flex-1">
+                <h5 className="text-sm font-medium text-foreground mb-1">Bias Score Reasoning</h5>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {article.bias_reasoning_brief}
+                </p>
+                
+                {article.bias_reasoning_detailed && (
+                  <div className="mt-3">
+                    <button
+                      onClick={() => setShowDetailedBias(!showDetailedBias)}
+                      className="flex items-center gap-1 text-xs text-accent hover:text-accent/80 transition-colors font-medium"
+                    >
+                      {showDetailedBias ? (
+                        <>
+                          <ChevronUp className="w-3 h-3" />
+                          Show less
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="w-3 h-3" />
+                          Show detailed analysis
+                        </>
+                      )}
+                    </button>
+                    
+                    {showDetailedBias && (
+                      <div className="mt-3 p-3 bg-muted/50 rounded-lg border border-border">
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {article.bias_reasoning_detailed}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Sentiment Reasoning */}
+        {article.sentiment_reasoning_brief && (
+          <div className="p-4">
+            <div className="flex items-start gap-3">
+              <div 
+                className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: sentimentInfo.color }}
+              >
+                <span className="text-xs font-bold text-white">S</span>
+              </div>
+              <div className="flex-1">
+                <h5 className="text-sm font-medium text-foreground mb-1">Sentiment Score Reasoning</h5>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {article.sentiment_reasoning_brief}
+                </p>
+                
+                {article.sentiment_reasoning_detailed && (
+                  <div className="mt-3">
+                    <button
+                      onClick={() => setShowDetailedSentiment(!showDetailedSentiment)}
+                      className="flex items-center gap-1 text-xs text-accent hover:text-accent/80 transition-colors font-medium"
+                    >
+                      {showDetailedSentiment ? (
+                        <>
+                          <ChevronUp className="w-3 h-3" />
+                          Show less
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="w-3 h-3" />
+                          Show detailed analysis
+                        </>
+                      )}
+                    </button>
+                    
+                    {showDetailedSentiment && (
+                      <div className="mt-3 p-3 bg-muted/50 rounded-lg border border-border">
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {article.sentiment_reasoning_detailed}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Main Claim */}
       {article.main_claim && (
         <div className="mb-4">
@@ -159,16 +271,6 @@ export default function ArticleDetail({ article, onClose }: ArticleDetailProps) 
         </div>
       )}
 
-      {/* View Article Button */}
-      <a
-        href={article.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center justify-center gap-2 w-full py-3 bg-accent text-accent-foreground rounded-lg font-medium hover:bg-accent/90 transition-colors"
-      >
-        <ExternalLink className="w-4 h-4" />
-        View Original Article
-      </a>
     </div>
   );
 }
