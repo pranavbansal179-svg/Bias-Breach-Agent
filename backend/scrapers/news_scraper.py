@@ -2,7 +2,7 @@
 from newsapi import NewsApiClient
 import os
 
-newsapi = NewsApiClient(api_key=os.getenv('NEWS_API_KEY'))
+newsapi = NewsApiClient(api_key=os.getenv('NEWSAPI_KEY') or os.getenv('NEWS_API_KEY'))
 
 def scrape_news(topic: str, sources: list[str] = None, limit: int = 20) -> list[dict]:
     resp = newsapi.get_everything(
