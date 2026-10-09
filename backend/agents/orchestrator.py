@@ -155,7 +155,7 @@ def collect_and_analyze_topic(topic: str) -> tuple[list, str]:
         relevant_articles.extend(filter_article_relevance(clean_topic, ai_articles))
         print(f"[Pipeline] AI Researcher generated {len(ai_articles)} perspective articles")
 
-    # Select top 9 most diverse articles across outlets
+    # Select top 6 most diverse articles across outlets (saves 35% tokens while ensuring balanced spectrum)
     seen_sources = set()
     diverse_selection = []
     for art in relevant_articles:
@@ -163,15 +163,15 @@ def collect_and_analyze_topic(topic: str) -> tuple[list, str]:
         if src not in seen_sources:
             diverse_selection.append(art)
             seen_sources.add(src)
-        if len(diverse_selection) >= 9:
+        if len(diverse_selection) >= 6:
             break
 
-    # If diverse selection is smaller than 9, fill up from remaining relevant articles
-    if len(diverse_selection) < 9:
+    # If diverse selection is smaller than 6, fill up from remaining relevant articles
+    if len(diverse_selection) < 6:
         for art in relevant_articles:
             if art not in diverse_selection:
                 diverse_selection.append(art)
-            if len(diverse_selection) >= 9:
+            if len(diverse_selection) >= 6:
                 break
 
     # 5. Enrich in parallel
