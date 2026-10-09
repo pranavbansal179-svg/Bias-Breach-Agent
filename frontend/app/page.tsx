@@ -81,10 +81,17 @@ export default function Home() {
     setStatusMessage("Triggering scrapers & multi-agent bias pipeline...");
 
     try {
-      // 1. Kick off background analysis on backend
-      await analyzeTopic(query);
+      // 1. Live multi-feed discovery & parallel bias analysis on backend
+      const result = await analyzeTopic(query);
+      if (result && result.articles && result.articles.length > 0) {
+        setData(result);
+        setActiveTopic(result.topic);
+        setLoading(false);
+        setStatusMessage("");
+        return;
+      }
 
-      // 2. Check if local demo data exists immediately for snappy UI
+      // 2. Fallback to pre-cached demo datasets if backend is unreachable
       const matchedDemo = Object.keys(DEMO_TOPICS).find(
         (k) => k.toLowerCase() === query.toLowerCase()
       );
@@ -96,31 +103,15 @@ export default function Home() {
         return;
       }
 
-      // 3. Poll backend for newly scraped and analyzed results
-      let attempts = 0;
-      const poll = setInterval(async () => {
-        attempts++;
-        try {
-          const res = await getResults(query);
-          if (res && res.count > 0) {
-            setData(res);
-            setActiveTopic(res.topic);
-            setLoading(false);
-            setStatusMessage("");
-            clearInterval(poll);
-          }
-        } catch {
-          // ignore polling errors
-        }
-
-        if (attempts > 12) {
-          setLoading(false);
-          setStatusMessage("");
-          clearInterval(poll);
-        }
-      }, 4000);
+      // 3. Query getResults
+      const res = await getResults(query);
+      if (res && res.articles && res.articles.length > 0) {
+        setData(res);
+        setActiveTopic(res.topic);
+      }
     } catch (err) {
       console.error("Analysis failed:", err);
+    } finally {
       setLoading(false);
       setStatusMessage("");
     }

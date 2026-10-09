@@ -21,6 +21,10 @@ class Article(Base):
     main_claim      = Column(String, nullable=True)
     framing         = Column(String, nullable=True)
     missing_voices  = Column(String, nullable=True)
+    sensationalism_score = Column(Float, nullable=True)
+    economic_axis   = Column(Float, nullable=True)
+    social_axis     = Column(Float, nullable=True)
+    evidence_quote  = Column(Text, nullable=True)
     embedding_id    = Column(String, nullable=True)
 
 class TopicSummary(Base):

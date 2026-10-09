@@ -81,23 +81,44 @@ export default function ArticleDetailModal({ article, onClose }: ArticleDetailMo
           <div className="rounded-2xl border border-slate-800 bg-[#0c101a] p-4 flex flex-col justify-between">
             <div>
               <div className="flex justify-between items-center text-xs font-medium text-slate-400 mb-1">
-                <span>Sentiment & Emotion</span>
+                <span>Sentiment & Tone</span>
                 <strong className="text-white">
                   {article.sentiment_score > 0 ? `+${article.sentiment_score.toFixed(2)}` : article.sentiment_score.toFixed(2)}
                 </strong>
               </div>
               <div className="text-xs text-slate-300 font-medium">
-                Dominant Tone: <span className="text-amber-300">{article.emotion || "Neutral"}</span>
+                Dominant Emotion: <span className="text-amber-300">{article.emotion || "Neutral"}</span>
               </div>
             </div>
-            <div className="mt-3 text-xs text-slate-300 font-medium">
+            <div className="mt-2 text-xs text-slate-300 font-medium">
               Narrative Frame: <span className="text-emerald-400">{article.framing || "Neutral"}</span>
             </div>
+            {article.sensationalism_score !== undefined && (
+              <div className="mt-2 flex items-center justify-between text-xs text-slate-300 font-medium border-t border-slate-800/80 pt-2">
+                <span>Sensationalism Index:</span>
+                <span className={article.sensationalism_score >= 6.5 ? "text-rose-400 font-bold" : article.sensationalism_score >= 4.0 ? "text-amber-400" : "text-emerald-400"}>
+                  {article.sensationalism_score.toFixed(1)} / 10
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Narrative Analysis Section */}
+        {/* Narrative & Evidence Analysis Section */}
         <div className="space-y-4 text-xs sm:text-sm">
+          {/* Evidence Quote */}
+          {article.evidence_quote && (
+            <div className="rounded-2xl border border-blue-500/20 bg-blue-950/20 p-4">
+              <div className="flex items-center gap-2 font-semibold text-blue-300 mb-1">
+                <MessageSquare className="h-4 w-4" />
+                <span>Framing Evidence Quote</span>
+              </div>
+              <p className="text-slate-200 italic leading-relaxed">
+                &ldquo;{article.evidence_quote}&rdquo;
+              </p>
+            </div>
+          )}
+
           {/* Main claim */}
           {article.main_claim && (
             <div className="rounded-2xl border border-purple-500/20 bg-purple-950/20 p-4">

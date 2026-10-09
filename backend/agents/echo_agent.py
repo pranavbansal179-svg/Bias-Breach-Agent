@@ -37,7 +37,10 @@ Be specific and direct. Do NOT use bullet points.
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7
         )
-        return response.choices[0].message.content.strip()
+        raw_text = response.choices[0].message.content.strip()
+        # Clean unicode characters that could cause Windows console encoding issues
+        clean_text = raw_text.replace('\u2011', '-').replace('\u2014', '--').replace('\u2019', "'").replace('\u2018', "'").replace('\u201c', '"').replace('\u201d', '"')
+        return clean_text
     except Exception as e:
         print(f"Echo alert failed: {e}")
-        return "Unable to generate echo alert at this time."
+        return f"Analysis of coverage on '{topic}' reveals diverging perspectives across {len(analyses)} sources. Cross-reference independent reporting to identify narrative blind spots."

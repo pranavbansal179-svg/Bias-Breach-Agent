@@ -112,6 +112,21 @@ export default function ArticleCard({ article, onSelect }: ArticleCardProps) {
           >
             {framing}
           </span>
+
+          {/* Sensationalism index */}
+          {article.sensationalism_score !== undefined && (
+            <span
+              className={`rounded-lg border px-2 py-0.5 text-[11px] font-medium ${
+                article.sensationalism_score >= 6.5
+                  ? "text-rose-400 border-rose-500/30 bg-rose-950/30"
+                  : article.sensationalism_score >= 4.0
+                  ? "text-amber-400 border-amber-500/30 bg-amber-950/30"
+                  : "text-slate-400 border-slate-700/60 bg-slate-800/40"
+              }`}
+            >
+              {article.sensationalism_score >= 6.5 ? "High Spin" : article.sensationalism_score >= 4.0 ? "Moderate Spin" : "Factual"}
+            </span>
+          )}
         </div>
       </div>
 

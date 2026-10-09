@@ -12,6 +12,10 @@ export interface Article {
   main_claim: string;
   missing_voices?: string;
   loaded_words: string[];
+  sensationalism_score?: number;
+  economic_axis?: number;
+  social_axis?: number;
+  evidence_quote?: string;
   published_at?: string;
 }
 
@@ -22,6 +26,7 @@ export interface TopicStats {
   avg_sentiment: number;
   sentiment_label: string;
   dominant_tone: string;
+  avg_sensationalism?: number;
   source_distribution: {
     news: number;
     reddit: number;

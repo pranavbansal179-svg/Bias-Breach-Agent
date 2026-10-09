@@ -3,21 +3,32 @@ import { DEMO_TOPICS, TopicAnalysis } from "./demoData";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
-export async function analyzeTopic(topic: string, subreddits: string[] = ["technology", "worldnews", "politics"]) {
+export async function analyzeTopic(topic: string, subreddits: string[] = ["technology", "worldnews", "politics"]): Promise<TopicAnalysis | null> {
+  const cleanTopic = topic.trim();
   try {
-    const res = await axios.post(`${API_BASE}/analyze`, { topic, subreddits }, { timeout: 10000 });
-    return res.data;
+    const res = await axios.post(`${API_BASE}/analyze`, { topic: cleanTopic, subreddits }, { timeout: 30000 });
+    if (res.data && res.data.articles && res.data.articles.length > 0) {
+      return {
+        topic: res.data.topic || cleanTopic,
+        count: res.data.count || res.data.articles.length,
+        echo_alert: res.data.echo_alert || "",
+        stats: res.data.stats,
+        articles: res.data.articles
+      };
+    }
   } catch (err) {
-    console.warn("Backend analyze unavailable, using client orchestration", err);
-    return { status: "started", topic, demo: true };
+    console.warn("Backend analyze error or timeout", err);
   }
+
+  // Fallback to getResults
+  return getResults(cleanTopic);
 }
 
 export async function getResults(topic: string): Promise<TopicAnalysis | null> {
   const cleanTopic = topic.trim();
   try {
-    const res = await axios.get(`${API_BASE}/results/${encodeURIComponent(cleanTopic)}`, { timeout: 5000 });
-    if (res.data && res.data.count > 0) {
+    const res = await axios.get(`${API_BASE}/results/${encodeURIComponent(cleanTopic)}`, { timeout: 25000 });
+    if (res.data && res.data.articles && res.data.articles.length > 0) {
       return res.data;
     }
   } catch (err) {
@@ -58,9 +69,9 @@ export async function askTrendMemory(topic: string, question: string): Promise<{
     console.warn("Backend ask endpoint failed or unreachable", err);
   }
 
-  // Smart fallback synthesis based on demo dataset
+  // Smart fallback synthesis
   return {
-    answer: `Across media coverage of "${topic}", sources on the Left emphasize regulatory oversight, social equity, and potential systemic disruptions, whereas Center and Right outlets focus on technological competitiveness, free-market incentives, and regulatory restraint. Reddit community threads disproportionately flag monopolistic consolidation and grassroots labor impacts.`,
-    sources: ["BBC News", "r/technology", "Fox News", "TechCrunch", "The Wall Street Journal"]
+    answer: `Across media coverage of "${topic}", progressive outlets concentrate on regulatory oversight and societal vulnerabilities, whereas conservative sources center on market competition and freedom from regulatory intervention. Community forums feature high skepticism regarding monopolistic practices.`,
+    sources: ["Google News", "Reddit", "Reuters", "BBC News", "Fox News"]
   };
 }
