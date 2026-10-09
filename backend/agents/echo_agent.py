@@ -31,16 +31,21 @@ Write a 3-sentence echo-chamber alert for a reader:
 
 Be specific and direct. Do NOT use bullet points.
 """
-    try:
-        response = client.chat.completions.create(
-            model="openai/gpt-oss-20b",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.7
-        )
-        raw_text = response.choices[0].message.content.strip()
-        # Clean unicode characters that could cause Windows console encoding issues
-        clean_text = raw_text.replace('\u2011', '-').replace('\u2014', '--').replace('\u2019', "'").replace('\u2018', "'").replace('\u201c', '"').replace('\u201d', '"')
-        return clean_text
-    except Exception as e:
-        print(f"Echo alert failed: {e}")
-        return f"Analysis of coverage on '{topic}' reveals diverging perspectives across {len(analyses)} sources. Cross-reference independent reporting to identify narrative blind spots."
+    clean_text = None
+    for model_name in ["qwen/qwen3.8-27b", "openai/gpt-oss-20b"]:
+        try:
+            response = client.chat.completions.create(
+                model=model_name,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7
+            )
+            raw_text = response.choices[0].message.content.strip()
+            # Clean unicode characters that could cause Windows console encoding issues
+            clean_text = raw_text.replace('\u2011', '-').replace('\u2014', '--').replace('\u2019', "'").replace('\u2018', "'").replace('\u201c', '"').replace('\u201d', '"')
+            if clean_text:
+                return clean_text
+        except Exception as e:
+            print(f"[Echo Agent] Model {model_name} failed: {e}")
+            continue
+
+    return f"Analysis of coverage on '{topic}' reveals diverging perspectives across {len(analyses)} sources. Cross-reference independent reporting to identify narrative blind spots."

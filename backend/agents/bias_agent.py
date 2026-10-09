@@ -45,21 +45,41 @@ Return ONLY valid JSON with this exact schema:
 }
 """
 
-def detect_bias(title: str, body: str) -> dict:
+# Known media outlet baseline biases (AllSides / Ad Fontes media ratings)
+OUTLET_BASELINES = {
+    "msnbc": -6.0, "the guardian": -5.0, "vox": -5.5, "mother jones": -7.5,
+    "cnn": -4.0, "new york times": -3.5, "washington post": -3.0, "politico": -1.5,
+    "reuters": 0.0, "associated press": 0.0, "ap": 0.0, "bbc": -0.5, "the hill": 0.0,
+    "bloomberg": 0.0, "c-span": 0.0, "wall street journal": 2.0, "fox news": 5.5,
+    "national review": 6.5, "washington examiner": 5.0, "new york post": 4.5,
+    "daily wire": 7.0, "breitbart": 8.0, "the federalist": 7.5
+}
+
+def get_outlet_baseline(source_name: str) -> float | None:
+    s = source_name.lower().strip()
+    for outlet, score in OUTLET_BASELINES.items():
+        if outlet in s:
+            return score
+    return None
+
+def detect_bias(title: str, body: str, source_name: str = "") -> dict:
     """
     Advanced Multi-Dimensional Media Bias Analysis.
     Evaluates political spectrum, sensationalism, multi-axis lean, and loaded vocabulary.
+    Grounded in linguistic framing and empirical media monitoring baselines.
     """
-    text = f"TITLE: {title}\n\nBODY EXCERPT: {body[:400]}"
+    baseline = get_outlet_baseline(source_name)
+    baseline_context = f"\nOUTLET BASELINE ESTIMATE: {baseline} (-10 Left to +10 Right)" if baseline is not None else ""
+    text = f"SOURCE: {source_name or 'Unknown Outlet'}{baseline_context}\nTITLE: {title}\n\nBODY EXCERPT: {body[:500]}"
     groq_key = os.getenv("GROQ_API_KEY")
 
     if groq_key:
-        for attempt in range(2):
+        from groq import Groq
+        client = Groq(api_key=groq_key)
+        for model_name in ["qwen/qwen3.8-27b", "openai/gpt-oss-20b"]:
             try:
-                from groq import Groq
-                client = Groq(api_key=groq_key)
                 response = client.chat.completions.create(
-                    model="openai/gpt-oss-20b",
+                    model=model_name,
                     messages=[
                         {"role": "system", "content": BIAS_SYSTEM_PROMPT},
                         {"role": "user", "content": text}
@@ -71,9 +91,13 @@ def detect_bias(title: str, body: str) -> dict:
                 end = content.rfind("}") + 1
                 if start != -1 and end > start:
                     data = json.loads(content[start:end])
-                    # Ensure clean types
+                    score = float(data.get("bias_score", 0.0))
+                    # Ground with known outlet baseline if available
+                    if baseline is not None and abs(score - baseline) > 4.5:
+                        score = round(score * 0.7 + baseline * 0.3, 2)
+
                     return {
-                        "bias_score": round(float(data.get("bias_score", 0.0)), 2),
+                        "bias_score": round(score, 2),
                         "bias_label": str(data.get("bias_label", "Center")),
                         "sensationalism_score": round(float(data.get("sensationalism_score", 3.0)), 1),
                         "economic_axis": round(float(data.get("economic_axis", 0.0)), 1),
@@ -81,48 +105,11 @@ def detect_bias(title: str, body: str) -> dict:
                         "loaded_words": [str(w) for w in data.get("loaded_words", [])][:5],
                         "evidence_quote": str(data.get("evidence_quote", title))[:200],
                         "reasoning": str(data.get("reasoning", "Standard balanced reporting."))[:250],
-                        "confidence": round(float(data.get("confidence", 0.85)), 2)
+                        "confidence": round(float(data.get("confidence", 0.88)), 2)
                     }
             except Exception as e:
-                if "429" in str(e) and attempt == 0:
-                    import time
-                    time.sleep(2.5)
-                    continue
-                print(f"[Bias Agent] Groq call failed: {e}")
-                break
-
-    # Fallback to OpenAI if configured
-    openai_key = os.getenv("OPENAI_API_KEY")
-    if openai_key:
-        try:
-            from openai import OpenAI
-            client = OpenAI(api_key=openai_key)
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": BIAS_SYSTEM_PROMPT},
-                    {"role": "user", "content": text}
-                ],
-                temperature=0.1
-            )
-            content = response.choices[0].message.content.strip()
-            start = content.find("{")
-            end = content.rfind("}") + 1
-            if start != -1 and end > start:
-                data = json.loads(content[start:end])
-                return {
-                    "bias_score": round(float(data.get("bias_score", 0.0)), 2),
-                    "bias_label": str(data.get("bias_label", "Center")),
-                    "sensationalism_score": round(float(data.get("sensationalism_score", 3.0)), 1),
-                    "economic_axis": round(float(data.get("economic_axis", 0.0)), 1),
-                    "social_axis": round(float(data.get("social_axis", 0.0)), 1),
-                    "loaded_words": [str(w) for w in data.get("loaded_words", [])][:5],
-                    "evidence_quote": str(data.get("evidence_quote", title))[:200],
-                    "reasoning": str(data.get("reasoning", "Standard reporting."))[:250],
-                    "confidence": round(float(data.get("confidence", 0.85)), 2)
-                }
-        except Exception as e:
-            print(f"[Bias Agent] OpenAI fallback failed: {e}")
+                print(f"[Bias Agent] Model {model_name} failed: {e}")
+                continue
 
     # Smart journalistic heuristic fallback when API quota is exhausted
     title_lower = f"{title} {body}".lower()
@@ -132,29 +119,43 @@ def detect_bias(title: str, body: str) -> dict:
         "crisis", "threat", "monopoly", "killed", "cripple", "overreaching",
         "woke", "censorship", "surge", "catastrophe", "crackdown", "scandal",
         "slashes", "soaring", "favoritism", "backlash", "tyranny", "authoritarian",
-        "rigged", "radical", "unprecedented", "collusion", "disaster", "looming"
+        "rigged", "radical", "unprecedented", "collusion", "disaster", "looming",
+        "slams", "blasts", "outrage", "fury", "greed", "destroying", "war on"
     ]
     found_loaded = [w for w in polarized_terms if w in title_lower][:5]
 
     # Calculate sensationalism (scale 0-10)
-    sensationalism = min(10.0, 1.5 + len(found_loaded) * 1.8 + (1.5 if "!" in title or "?" in title else 0.0))
+    sensationalism = min(10.0, 1.5 + len(found_loaded) * 1.6 + (1.5 if "!" in title or "?" in title else 0.0))
 
     # Directional lean heuristics
-    left_signals = ["inequality", "climate crisis", "civil rights", "monopoly", "worker", "labor", "undocumented", "lgbtq", "corporate greed", "universal"]
-    right_signals = ["border security", "illegal", "free market", "woke", "regulation", "overreach", "tax relief", "second amendment", "traditional", "deficit"]
+    left_signals = ["inequality", "climate crisis", "civil rights", "monopoly", "worker", "labor", "undocumented", "lgbtq", "corporate greed", "universal", "systemic"]
+    right_signals = ["border security", "illegal", "free market", "woke", "regulation", "overreach", "tax relief", "second amendment", "traditional", "deficit", "sovereignty"]
 
     left_hits = sum(1 for w in left_signals if w in title_lower)
     right_hits = sum(1 for w in right_signals if w in title_lower)
 
     bias_score = 0.0
-    bias_label = "Center"
-
-    if left_hits > right_hits:
+    if baseline is not None:
+        bias_score = baseline
+    elif left_hits > right_hits:
         bias_score = round(-1.5 - min(4.5, left_hits * 1.5), 2)
-        bias_label = "Left" if bias_score < -2.5 else "Center-Left"
     elif right_hits > left_hits:
         bias_score = round(1.5 + min(4.5, right_hits * 1.5), 2)
-        bias_label = "Right" if bias_score > 2.5 else "Center-Right"
+
+    if bias_score <= -4.0:
+        bias_label = "Far Left"
+    elif bias_score <= -1.5:
+        bias_label = "Left"
+    elif bias_score <= -0.5:
+        bias_label = "Center-Left"
+    elif bias_score <= 0.5:
+        bias_label = "Center"
+    elif bias_score <= 1.5:
+        bias_label = "Center-Right"
+    elif bias_score <= 4.0:
+        bias_label = "Right"
+    else:
+        bias_label = "Far Right"
 
     return {
         "bias_score": bias_score,
@@ -164,6 +165,6 @@ def detect_bias(title: str, body: str) -> dict:
         "social_axis": round(bias_score * 0.8, 1),
         "loaded_words": found_loaded,
         "evidence_quote": title[:140],
-        "reasoning": f"Assigned {bias_label} based on lexical framing, loaded terms ({', '.join(found_loaded) if found_loaded else 'minimal'}), and source attribution.",
-        "confidence": 0.78
+        "reasoning": f"Assigned {bias_label} based on source baseline ({source_name or 'General'}), loaded terms ({', '.join(found_loaded) if found_loaded else 'minimal'}), and lexical framing.",
+        "confidence": 0.82
     }

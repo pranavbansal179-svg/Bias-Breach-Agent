@@ -19,13 +19,13 @@ Include perspectives from:
 
 Return ONLY a valid JSON array of objects with this exact structure:
 [
-  {
-    "source_type": "news" | "reddit" | "blog",
+  {{
+    "source_type": "news",
     "source_name": "BBC News",
     "title": "Clear headline with source framing",
     "body": "2-3 sentences summarizing the article argument, quotes, and framing",
     "url": "https://example.com/article-url"
-  }
+  }}
 ]
 """
 
@@ -41,15 +41,27 @@ def research_topic_articles(topic: str) -> list[dict]:
     try:
         from groq import Groq
         client = Groq(api_key=groq_key)
-        resp = client.chat.completions.create(
-            model="openai/gpt-oss-20b",
-            messages=[
-                {"role": "system", "content": "You are an objective media research tool. Output ONLY valid JSON array."},
-                {"role": "user", "content": RESEARCH_PROMPT.format(topic=topic)}
-            ],
-            temperature=0.3
-        )
-        content = resp.choices[0].message.content.strip()
+        content = None
+        for model_name in ["qwen/qwen3.8-27b", "openai/gpt-oss-20b"]:
+            try:
+                resp = client.chat.completions.create(
+                    model=model_name,
+                    messages=[
+                        {"role": "system", "content": "You are an objective media research tool. Output ONLY valid JSON array."},
+                        {"role": "user", "content": RESEARCH_PROMPT.format(topic=topic)}
+                    ],
+                    temperature=0.3
+                )
+                content = resp.choices[0].message.content.strip()
+                if content:
+                    break
+            except Exception as model_err:
+                print(f"[AI Researcher] Model {model_name} failed: {model_err}")
+                continue
+
+        if not content:
+            return []
+
         start = content.find("[")
         end = content.rfind("]") + 1
         if start != -1 and end > start:

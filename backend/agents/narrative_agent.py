@@ -19,19 +19,23 @@ Extract the core narrative from this article. Return ONLY valid JSON:
 
 def extract_narrative(title: str, body: str) -> dict:
     text = f"TITLE: {title}\n\nBODY: {body[:1500]}"
-    try:
-        response = client.chat.completions.create(
-            model="openai/gpt-oss-20b",
-            messages=[
-                {"role": "system", "content": NARRATIVE_PROMPT},
-                {"role": "user",   "content": text}
-            ],
-            temperature=0.3
-        )
-        content = response.choices[0].message.content
-        start = content.find("{")
-        end = content.rfind("}") + 1
-        return json.loads(content[start:end])
-    except Exception as e:
-        print(f"Narrative extraction failed: {e}")
-        return {"main_claim": "", "entities": [], "framing": "neutral", "missing_voices": ""}
+    for model_name in ["qwen/qwen3.8-27b", "openai/gpt-oss-20b"]:
+        try:
+            response = client.chat.completions.create(
+                model=model_name,
+                messages=[
+                    {"role": "system", "content": NARRATIVE_PROMPT},
+                    {"role": "user",   "content": text}
+                ],
+                temperature=0.3
+            )
+            content = response.choices[0].message.content
+            start = content.find("{")
+            end = content.rfind("}") + 1
+            if start != -1 and end > start:
+                return json.loads(content[start:end])
+        except Exception as e:
+            print(f"[Narrative Agent] Model {model_name} failed: {e}")
+            continue
+
+    return {"main_claim": "", "entities": [], "framing": "neutral", "missing_voices": ""}

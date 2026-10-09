@@ -286,17 +286,46 @@ def analyze(req: AnalyzeRequest):
         "articles": formatted_articles
     }
 
+def is_article_relevant(topic: str, title: str, body: str) -> bool:
+    """Verifies that an article matches the target topic keywords."""
+    noise_words = {"the", "and", "for", "with", "about", "from", "this", "that", "into", "over", "news"}
+    keywords = [w.lower() for w in topic.split() if len(w) >= 3 and w.lower() not in noise_words]
+    if not keywords:
+        return True
+
+    title_lower = (title or "").lower()
+    full_text = f"{title_lower} {(body or '').lower()}"
+
+    if len(keywords) == 1:
+        return keywords[0] in full_text
+
+    title_matches = any(kw in title_lower for kw in keywords)
+    body_matches = sum(1 for kw in keywords if kw in full_text)
+    return title_matches or body_matches >= 2
+
 @app.get("/api/v1/results/{topic}")
 def get_results(topic: str, db: Session = Depends(get_db)):
     clean_topic = topic.strip()
-    articles = db.query(Article).filter(func.lower(Article.topic) == clean_topic.lower()).all()
+    db_articles = db.query(Article).filter(func.lower(Article.topic) == clean_topic.lower()).all()
 
-    # If topic has not been analyzed yet, proactively discover and analyze it on the fly!
-    if not articles:
-        print(f"[Results] '{clean_topic}' not in database. Triggering on-demand discovery...")
+    # Filter strictly for relevance
+    relevant_db = [a for a in db_articles if is_article_relevant(clean_topic, a.title, a.body)]
+
+    # If no relevant articles exist or we have fewer than 4, run fresh discovery
+    if len(relevant_db) < 4:
+        print(f"[Results] '{clean_topic}' has only {len(relevant_db)} relevant articles in DB. Running live discovery...")
         enriched, alert = run_pipeline_sync(clean_topic)
-        # Re-fetch or format
-        articles = db.query(Article).filter(func.lower(Article.topic) == clean_topic.lower()).all()
+        # Re-query
+        db_articles = db.query(Article).filter(func.lower(Article.topic) == clean_topic.lower()).all()
+        relevant_db = [a for a in db_articles if is_article_relevant(clean_topic, a.title, a.body)]
+
+    # De-duplicate by title
+    seen_titles = set()
+    articles = []
+    for a in relevant_db:
+        if a.title.lower() not in seen_titles:
+            articles.append(a)
+            seen_titles.add(a.title.lower())
 
     if not articles:
         return {
@@ -328,17 +357,17 @@ def get_results(topic: str, db: Session = Depends(get_db)):
             "missing_voices":       a.missing_voices or "",
             "published_at":         a.published_at.isoformat() if a.published_at else None
         }
-        for a in articles
+        for a in articles[:12]
     ]
 
-    stats = compute_topic_stats(articles)
+    stats = compute_topic_stats(articles[:12])
 
     summary = db.query(TopicSummary).filter(func.lower(TopicSummary.topic) == clean_topic.lower()).first()
     echo_alert = summary.echo_alert if summary and summary.echo_alert else ""
     if not echo_alert:
         echo_alert = (
             f"Analysis of \"{clean_topic}\" coverage reveals a {stats['bias_label'].lower()} perspective distribution "
-            f"across {len(articles)} sources. The overall sentiment is {stats['sentiment_label'].lower()}, with \"{stats['dominant_tone'].lower()}\" "
+            f"across {len(enriched)} sources. The overall sentiment is {stats['sentiment_label'].lower()}, with \"{stats['dominant_tone'].lower()}\" "
             f"being the prominent emotional frame. Consider cross-checking across different media sources to break out of single-bubble narratives."
         )
 
