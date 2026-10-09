@@ -15,3 +15,4 @@ Thumbs.db
 *.log
 celerybeat-schedule
 postgres_data/
+Bias-Breach-Agent/

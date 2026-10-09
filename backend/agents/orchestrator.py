@@ -13,13 +13,14 @@ def run_full_pipeline(articles: list) -> list:
         bias      = detect_bias(title, body)
         narrative = extract_narrative(title, body)
 
+        import json
         enriched.append({
             **article,
             "sentiment_score": sentiment["score"],
             "emotion":         sentiment["emotion"],
             "bias_score":      bias.get("bias_score", 0),
             "bias_label":      bias.get("bias_label", "center"),
-            "loaded_words":    str(bias.get("loaded_words", [])),
+            "loaded_words":    json.dumps(bias.get("loaded_words", [])),
             "main_claim":      narrative.get("main_claim", ""),
             "framing":         narrative.get("framing", "neutral"),
             "missing_voices":  narrative.get("missing_voices", ""),

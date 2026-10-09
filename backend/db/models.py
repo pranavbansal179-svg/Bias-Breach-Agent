@@ -22,3 +22,15 @@ class Article(Base):
     framing         = Column(String, nullable=True)
     missing_voices  = Column(String, nullable=True)
     embedding_id    = Column(String, nullable=True)
+
+class TopicSummary(Base):
+    __tablename__ = 'topic_summaries'
+    id              = Column(Integer, primary_key=True, index=True)
+    topic           = Column(String, unique=True, index=True)
+    echo_alert      = Column(Text, nullable=True)
+    avg_bias        = Column(Float, nullable=True)
+    avg_sentiment   = Column(Float, nullable=True)
+    dominant_tone   = Column(String, nullable=True)
+    article_count   = Column(Integer, default=0)
+    created_at      = Column(DateTime, default=datetime.utcnow)
+    updated_at      = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

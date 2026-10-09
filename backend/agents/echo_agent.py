@@ -1,13 +1,13 @@
-from openai import OpenAI
+from groq import Groq
 from dotenv import load_dotenv
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-def generate_echo_alert(topic: str, analyses: list[dict]) -> str:
+def generate_echo_alert(topic: str, analyses: list) -> str:
     summaries = []
     for a in analyses[:10]:
         summaries.append(
@@ -33,7 +33,7 @@ Be specific and direct. Do NOT use bullet points.
 """
     try:
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="openai/gpt-oss-20b",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7
         )
